@@ -191,7 +191,7 @@
   </if>
   <if expr="is_win or is_linux">
     <message name="IDS_SETTINGS_OVERSCROLL_HISTORY_NAVIGATION_SUBTITLE" desc="Subtitle for the overscroll history navigation setting, which allows you to navigate back and forward by swiping left or right with a touch device.">
-      Navigate back and forward with swipe gesture
+      Navigate back and forward with a swipe gesture
     </message>
   </if>
   <if expr="is_macosx">
@@ -1015,6 +1015,9 @@
   </message>
   <message name="IDS_SETTINGS_CLEAR_PERIOD_EVERYTHING" desc="The option to delete browsing data from the beginning of time.">
     All time
+  </message>
+  <message name="IDS_SETTINGS_CLEAR_PERIOD_15_MINUTES" desc="The option to delete browsing data from the last 15 minutes.">
+    Last 15 minutes
   </message>
   <message name="IDS_SETTINGS_NOTIFICATION_WARNING" desc="A warning that notifications will be disabled by deleting cookies for this site.">
     Notifications will be disabled
@@ -2553,8 +2556,11 @@
   <message name="IDS_SETTINGS_SITE_SETTINGS_ALL_SITES_SORT_METHOD_NAME" desc="A selection menu option to sort the All Sites list by the name of the site, which is derived from its URL." meaning="Name of an inanimate object">
     Name
   </message>
+  <message name="IDS_SETTINGS_SITE_SETTINGS_FILE_SYSTEM_SITE_LIST_HEADER" desc="The header name for a list of origins that the user has granted edit permissions from the File System Access API.">
+    Allowed to edit files or folders on your device
+  </message>
   <message name="IDS_SETTINGS_SITE_SETTINGS_FILE_SYSTEM_SITE_LIST_EDIT_HEADER" desc="The header name for a list of files that the user has granted edit permissions from the File System Access API.">
-    Edit
+    Can edit files or folders on your device
   </message>
   <message name="IDS_SETTINGS_SITE_SETTINGS_FILE_SYSTEM_SITE_LIST_REMOVE_GRANT_LABEL" desc="A label that represents removing a site's permission to access a file or folder, previously granted access from the File System Access API.">
     Remove grant
@@ -2563,7 +2569,7 @@
     Remove
   </message>
   <message name="IDS_SETTINGS_SITE_SETTINGS_FILE_SYSTEM_SITE_LIST_VIEW_HEADER" desc="The header name for a list of files that the user has granted view permissions from the File System Access API.">
-    View
+    Can view files or folders on your device
   </message>
   <message name="IDS_SETTINGS_SITE_SETTINGS_FILE_SYSTEM_SITE_LIST_VIEW_SITE_DETAILS" desc="A menu option that navigates to the site details page for the selected site.">
     View site details
@@ -3247,7 +3253,10 @@
     Most sites should work as expected
   </message>
   <message name="IDS_SETTINGS_TRACKING_PROTECTION_BULLET_TWO_DESCRIPTION" desc="Description of the second bullet for Tracking Protection settings. Explains that you can temporarilty allow a site to use third-party cookies if it isn't working. Contains a learn more link to a help center article.">
-    If a site isn’t working, you can try giving it temporary permission to use third-party cookies. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>Learn more<ph name="END_LINK">&lt;/a&gt;<ex>&lt;/a&gt;</ex></ph>
+    If a site isn’t working, you can try giving it temporary permission to use third-party cookies. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1" aria-label="$2"&gt;</ph>Learn more<ph name="END_LINK">&lt;/a&gt;<ex>&lt;/a&gt;</ex></ph>
+  </message>
+  <message name="IDS_SETTINGS_TRACKING_PROTECTION_BULLET_TWO_LEARN_MORE_ARIA_LABEL" desc="Screenreader text for the 'Learn more' link in the second bullet of Tracking Protection settings.">
+    Learn more about giving a site temporary permission to use third-party cookies
   </message>
   <message name="IDS_SETTINGS_TRACKING_PROTECTION_ADVANCED_LABEL" desc="Label for a section on the Tracking Protection settings page containing advanced options.">
     Advanced
@@ -3257,6 +3266,9 @@
   </message>
   <message name="IDS_SETTINGS_TRACKING_PROTECTION_THIRD_PARTY_COOKIES_TOGGLE_SUB_LABEL" desc="Sub-label for the third-party cookie blocking toggle. Explains that features on some sites may not work when the toggle is on and third-party cookies are blocked.">
     Features on some sites may not work.
+  </message>
+  <message name="IDS_SETTINGS_TRACKING_PROTECTION_THIRD_PARTY_COOKIES_LEARN_MORE_ARIA_LABEL" desc="Screenreader text for the 'Learn more' link in the sub-label of the third-party cookie blocking toggle.">
+    Learn more about sites that may not work when blocking third-party cookies
   </message>
   <message name="IDS_SETTINGS_TRACKING_PROTECTION_DO_NOT_TRACK_TOGGLE_SUB_LABEL" desc="Sub-label for the Do Not Track toggle. Explains that sites may not respond to 'do not track' requests even when this toggle is on.">
     Sites use their discretion when responding to this request
@@ -3697,7 +3709,7 @@
   <message name="IDS_SETTINGS_STORAGE_ACCESS_RESET_ALL" desc="Label for the trashcan button to reset the permission for allowing or blocking a website to access its unpartitioned cookies while embedded in all other sites.">
     Remove <ph name="SITE">$1<ex>google.com</ex></ph>
   </message>
-  <message name="IDS_SETTINGS_STORAGE_ACCESS_RESET_SITE" desc="Label for the trashcan button to reset all the permissions for allowing or blocking a website (embedded.com) to “use their info“ while on another website (top-level.com).">
+  <message name="IDS_SETTINGS_STORAGE_ACCESS_RESET_SITE" desc="Label for the trashcan button to reset the permission for allowing or blocking a website (embedded.com) to “use their info“ while on another website (top-level.com).">
     Remove <ph name="EMBEDDED_SITE">$1<ex>embedding.com</ex></ph> from <ph name="SITE">$2<ex>top-level.com</ex></ph>
   </message>
   <message name="IDS_SETTINGS_STORAGE_ACCESS_OPEN_EXPAND" desc="Label for an expand button to open a collapse row with the websites an origin website (top-level.com) is allowed or blocked to “use their info“ on">
