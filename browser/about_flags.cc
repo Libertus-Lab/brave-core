@@ -910,6 +910,13 @@
           "Not recommended.",                                                  \
           kOsWin | kOsLinux | kOsMac,                                          \
           FEATURE_VALUE_TYPE(features::kBraveOverrideDownloadDangerLevel),     \
+      },                                                                       \
+      {                                                                        \
+          "brave-web-content-padding",                                         \
+          "Add padding and shadows to main content area",                      \
+          "Enables an updated browser layout with padded web content",         \
+          kOsWin | kOsLinux | kOsMac,                                          \
+          FEATURE_VALUE_TYPE(features::kBraveWebContentPadding),               \
       })                                                                       \
   BRAVE_IPFS_FEATURE_ENTRIES                                                   \
   BRAVE_NATIVE_WALLET_FEATURE_ENTRIES                                          \

@@ -29,4 +29,10 @@ BASE_FEATURE(kBraveOverrideDownloadDangerLevel,
              "brave-override-download-danger-level",
              base::FEATURE_DISABLED_BY_DEFAULT);
 
+// Adds padding and a drop shadow to the main web content area and side bar
+// panels.
+BASE_FEATURE(kBraveWebContentPadding,
+             "brave-web-content-padding",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+
 }  // namespace features
