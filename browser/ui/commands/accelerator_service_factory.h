@@ -34,6 +34,10 @@ class AcceleratorServiceFactory : public ProfileKeyedServiceFactory {
   AcceleratorServiceFactory();
   ~AcceleratorServiceFactory() override;
 
+  // BrowserContextKeyedServiceFactory overrides:
+  content::BrowserContext* GetBrowserContextToUse(
+      content::BrowserContext* context) const override;
+
   void RegisterProfilePrefs(
       user_prefs::PrefRegistrySyncable* registry) override;
 

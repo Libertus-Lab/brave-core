@@ -542,10 +542,14 @@ void BraveBrowserView::LoadAccelerators() {
     auto* accelerator_service =
         commands::AcceleratorServiceFactory::GetForContext(
             browser()->profile());
-    accelerators_observation_.Observe(accelerator_service);
-  } else {
-    BrowserView::LoadAccelerators();
+    // accelerator_service can be nullptr in unit tests
+    if (accelerator_service) {
+      accelerators_observation_.Observe(accelerator_service);
+      return;
+    }
   }
+
+  BrowserView::LoadAccelerators();
 }
 
 void BraveBrowserView::OnTabStripModelChanged(

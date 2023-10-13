@@ -45,6 +45,8 @@ class BraveVpnServiceFactory : public BrowserContextKeyedServiceFactory {
   ~BraveVpnServiceFactory() override;
 
   // BrowserContextKeyedServiceFactory overrides:
+  content::BrowserContext* GetBrowserContextToUse(
+      content::BrowserContext* context) const override;
   std::unique_ptr<KeyedService> BuildServiceInstanceForBrowserContext(
       content::BrowserContext* context) const override;
   void RegisterProfilePrefs(

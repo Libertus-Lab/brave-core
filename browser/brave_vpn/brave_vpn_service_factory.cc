@@ -126,6 +126,15 @@ BraveVpnServiceFactory::BraveVpnServiceFactory()
 
 BraveVpnServiceFactory::~BraveVpnServiceFactory() = default;
 
+content::BrowserContext* BraveVpnServiceFactory::GetBrowserContextToUse(
+    content::BrowserContext* context) const {
+  auto* profile = Profile::FromBrowserContext(context);
+  if (profile->AsTestingProfile()) {
+    return nullptr;
+  }
+  return context;
+}
+
 std::unique_ptr<KeyedService>
 BraveVpnServiceFactory::BuildServiceInstanceForBrowserContext(
     content::BrowserContext* context) const {

@@ -44,6 +44,15 @@ AcceleratorServiceFactory::AcceleratorServiceFactory()
 
 AcceleratorServiceFactory::~AcceleratorServiceFactory() = default;
 
+content::BrowserContext* AcceleratorServiceFactory::GetBrowserContextToUse(
+    content::BrowserContext* context) const {
+  auto* profile = Profile::FromBrowserContext(context);
+  if (profile->AsTestingProfile()) {
+    return nullptr;
+  }
+  return context;
+}
+
 void AcceleratorServiceFactory::RegisterProfilePrefs(
     user_prefs::PrefRegistrySyncable* registry) {
   AcceleratorPrefManager::RegisterProfilePrefs(registry);

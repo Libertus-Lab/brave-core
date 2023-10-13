@@ -55,7 +55,7 @@ bool IsTorDisabledForProfile(Profile* profile) {
 bool IsRegularProfile(content::BrowserContext* context) {
   auto* profile = Profile::FromBrowserContext(context);
   return !context->IsTor() && !profile->IsGuestSession() &&
-         profile->IsRegularProfile();
+         /* !profile->AsTestingProfile() && */profile->IsRegularProfile();
 }
 
 void RecordSponsoredImagesEnabledP3A(Profile* profile) {

@@ -22,7 +22,7 @@ void BraveUnitTestSuite::Initialize() {
 #endif
   ChromeUnitTestSuite::Initialize();
 
-  brave::InitializeResourceBundle();
+  //brave::InitializeResourceBundle();
 
   brave::RegisterPathProvider();
 }
