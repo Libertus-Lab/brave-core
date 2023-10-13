@@ -8,11 +8,16 @@
 #include "brave/browser/profiles/profile_util.h"
 #include "brave/components/brave_vpn/common/brave_vpn_utils.h"
 #include "build/build_config.h"
+#include "chrome/browser/profiles/profile.h"
 #include "components/user_prefs/user_prefs.h"
 
 namespace brave_vpn {
 
 bool IsAllowedForContext(content::BrowserContext* context) {
+  auto* profile = Profile::FromBrowserContext(context);
+  if (profile->AsTestingProfile()) {
+    return false;
+  }
   return brave::IsRegularProfile(context) &&
          brave_vpn::IsBraveVPNFeatureEnabled();
 }
