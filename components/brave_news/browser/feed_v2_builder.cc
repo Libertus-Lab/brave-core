@@ -96,13 +96,12 @@ double GetPopRecency(const mojom::FeedItemMetadataPtr& article) {
 
   auto& publish_time = article->publish_time;
 
-  double popularity = article->pop_score == 0
-                          ? features::kBraveNewsPopScoreFallback.Get()
-                          : article->pop_score;
+  double popularity = article->pop_score;
   double multiplier = publish_time > base::Time::Now() - base::Hours(5) ? 2 : 1;
   auto dt = base::Time::Now() - publish_time;
 
-  return multiplier * popularity *
+  return (multiplier * popularity +
+          features::kBraveNewsPopScoreFallback.Get()) *
          pow(0.5, dt.InHours() / pop_recency_half_life_in_hours);
 }
 
@@ -123,10 +122,12 @@ ArticleWeight GetArticleWeight(const mojom::FeedItemMetadataPtr& article,
   const double source_visits_min = features::kBraveNewsSourceVisitsMin.Get();
   const double source_visits_projected =
       source_visits_min + signals.at(0)->visit_weight * (1 - source_visits_min);
-  const auto pop_recency = GetPopRecency(article);
+  const auto pop_recency =
+      base::ranges::min(GetPopRecency(article), 300.0) / 300.0;
   return {
       .pop_recency = pop_recency,
-      .weighting = source_visits_projected * subscribed_weight * pop_recency,
+      .weighting =
+          100 * source_visits_projected * subscribed_weight * pop_recency,
       // Note: GetArticleWeight returns the Signal for the Publisher first, and
       // we use that to determine whether this Publisher has ever been visited.
       .visited = signals.at(0)->visit_weight != 0,

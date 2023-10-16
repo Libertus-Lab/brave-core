@@ -32,9 +32,9 @@ const base::FeatureParam<double> kBraveNewsInlineDiscoveryRatio{
     &kBraveNewsFeedUpdate, "inline-discovery-ratio", 0.25};
 
 const base::FeatureParam<double> kBraveNewsSourceSubscribedBoost{
-    &kBraveNewsFeedUpdate, "source-subscribed-boost", 1};
+    &kBraveNewsFeedUpdate, "source-subscribed-boost", 0.5};
 const base::FeatureParam<double> kBraveNewsChannelSubscribedBoost{
-    &kBraveNewsFeedUpdate, "channel-subscribed-boost", 0.2};
+    &kBraveNewsFeedUpdate, "channel-subscribed-boost", 0.5};
 
 const base::FeatureParam<double> kBraveNewsSourceVisitsMin{
     &kBraveNewsFeedUpdate, "source-visits-min", 0.2};
