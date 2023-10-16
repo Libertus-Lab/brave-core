@@ -17,6 +17,8 @@ template <typename T>
 class NoDestructor;
 }  // namespace base
 
+class TestingProfile;
+
 namespace commands {
 
 class AcceleratorServiceFactory : public ProfileKeyedServiceFactory {
@@ -30,13 +32,10 @@ class AcceleratorServiceFactory : public ProfileKeyedServiceFactory {
 
  private:
   friend base::NoDestructor<AcceleratorServiceFactory>;
+  friend class ::TestingProfile;
 
   AcceleratorServiceFactory();
   ~AcceleratorServiceFactory() override;
-
-  // BrowserContextKeyedServiceFactory overrides:
-  content::BrowserContext* GetBrowserContextToUse(
-      content::BrowserContext* context) const override;
 
   void RegisterProfilePrefs(
       user_prefs::PrefRegistrySyncable* registry) override;

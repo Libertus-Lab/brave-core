@@ -24,6 +24,8 @@ template <typename T>
 class NoDestructor;
 }  // namespace base
 
+class TestingProfile;
+
 // Exposed for tests.
 constexpr char kDefaultSearchEngineMetric[] = "Brave.Search.DefaultEngine.4";
 constexpr char kSwitchSearchEngineMetric[] = "Brave.Search.SwitchEngine";
@@ -72,6 +74,8 @@ class SearchEngineTrackerFactory : public BrowserContextKeyedServiceFactory {
 
  private:
   friend base::NoDestructor<SearchEngineTrackerFactory>;
+  friend class ::TestingProfile;
+
   SearchEngineTrackerFactory();
   ~SearchEngineTrackerFactory() override;
 
@@ -80,8 +84,6 @@ class SearchEngineTrackerFactory : public BrowserContextKeyedServiceFactory {
       delete;
 
   // BrowserContextKeyedServiceFactory overrides:
-  content::BrowserContext* GetBrowserContextToUse(
-      content::BrowserContext* context) const override;
   KeyedService* BuildServiceInstanceFor(
       content::BrowserContext* context) const override;
   bool ServiceIsCreatedWithBrowserContext() const override;
