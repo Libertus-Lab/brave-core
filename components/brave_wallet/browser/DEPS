@@ -7,5 +7,7 @@ include_rules = [
   "+third_party/re2",
   "+brave/components/constants",
   "+brave/components/version_info",
+  "+brave/third_party/argon2",
   "+tools/json_schema_compiler",
 ]
+

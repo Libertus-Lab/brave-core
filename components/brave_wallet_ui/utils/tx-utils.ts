@@ -229,6 +229,15 @@ export function isBitcoinTransaction(
   return tx.txDataUnion.btcTxData !== undefined
 }
 
+export function isZCashTransaction(
+  tx?: Pick<TransactionInfo, 'txDataUnion'>
+) {
+  if (!tx) {
+    return false
+  }
+  return tx.txDataUnion.zecTxData !== undefined
+}
+
 export function isEthereumTransaction (tx?: TransactionInfo) {
   return tx?.txDataUnion.ethTxData !== undefined || tx?.txDataUnion.ethTxData1559 !== undefined
 }
@@ -338,6 +347,10 @@ export const getTransactionToAddress = (
 
   if (isSolanaTransaction(tx)) {
     return tx.txDataUnion.solanaTxData?.toWalletAddress ?? ''
+  }
+
+  if (isZCashTransaction(tx)) {
+    return tx.txDataUnion.zecTxData?.to ?? ''
   }
 
   return ''
@@ -564,6 +577,10 @@ export function getTransactionBaseValue (tx: TransactionInfo) {
     return tx.txDataUnion.btcTxData?.amount.toString() ?? ''
   }
 
+  if (isZCashTransaction(tx)) {
+    return tx.txDataUnion.btcTxData?.amount.toString() ?? ''
+  }
+
   assertNotReached('Unknown transaction type')
 }
 
@@ -733,11 +750,16 @@ export const getTransactionGasFee = (transaction: TransactionInfo): string => {
   assert(
     isEthereumTransaction(transaction) ||
     isFilecoinTransaction(transaction) ||
-    isBitcoinTransaction(transaction)
+    isBitcoinTransaction(transaction)  ||
+    isZCashTransaction(transaction)
   )
 
   if (isBitcoinTransaction(transaction)) {
     return transaction.txDataUnion.btcTxData?.fee.toString() || ''
+  }
+
+  if (isZCashTransaction(transaction)) {
+    return transaction.txDataUnion.zecTxData?.fee.toString() || ''
   }
 
   const { maxFeePerGas, gasPrice } = getTransactionGas(transaction)
@@ -769,6 +791,10 @@ export const isTransactionGasLimitMissing = (tx: TransactionInfo): boolean => {
     return false;
   }
 
+  if (isZCashTransaction(tx)) {
+    return false;
+  }
+
   if (isEthereumTransaction(tx) || isFilecoinTransaction(tx)) {
     const gasLimit = getTransactionGasLimit(tx)
     return (gasLimit === '' || Amount.normalize(gasLimit) === '0')
@@ -780,7 +806,7 @@ export const isTransactionGasLimitMissing = (tx: TransactionInfo): boolean => {
 export const parseTransactionFeesWithoutPrices = (
   tx: TransactionInfo
 ) => {
-  if (isSolanaTransaction(tx) || isBitcoinTransaction(tx)) {
+  if (isSolanaTransaction(tx) || isBitcoinTransaction(tx) || isZCashTransaction(tx)) {
     return {
       gasLimit: '',
       gasPrice: '',
