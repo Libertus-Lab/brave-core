@@ -54,9 +54,9 @@ void DoPostUninstallOperations(const base::Version& version,
   DCHECK_EQ(survey_url.find(L'?', pos + 1), std::wstring::npos);
   DCHECK_NE(survey_url.back(), L'&');
 #endif
-  auto url = base::StrCat({survey_url.c_str(), L"&crversion=",
-                           base::ASCIIToWide(version.GetString()).c_str(),
-                           L"&os=", os_version.c_str()});
+  auto url = base::StrCat({survey_url, L"&crversion=",
+                           base::ASCIIToWide(version.GetString()), L"&os=",
+                           os_version});
   if (os_info->version() < base::win::Version::WIN10 ||
       !NavigateToUrlWithEdge(url)) {
     NavigateToUrlWithIExplore(url);

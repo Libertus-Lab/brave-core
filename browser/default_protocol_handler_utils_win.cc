@@ -144,8 +144,8 @@ std::wstring FormatUserChoiceString(std::wstring_view ext,
   const std::wstring file_time_str = base::ASCIIToWide(base::StringPrintf(
       "%08lx%08lx", file_time.dwHighDateTime, file_time.dwLowDateTime));
 
-  const std::wstring user_choice = base::StrCat(
-      {ext.data(), sid.data(), prog_id.data(), file_time_str, user_experience});
+  const std::wstring user_choice =
+      base::StrCat({ext, sid, prog_id, file_time_str, user_experience});
   // For using CharLowerW instead of base::ToLowerASCII().
   // Otherwise, hash test with non-ascii inputs are failed.
   std::vector<wchar_t> buf(user_choice.begin(), user_choice.end());
@@ -208,7 +208,7 @@ std::wstring GetAssociationKeyPath(std::wstring_view protocol) {
         L"UrlAssociations\\";
   }
 
-  return base::StrCat({key_path, protocol.data()});
+  return base::StrCat({key_path, protocol});
 }
 
 bool SetUserChoice(std::wstring_view ext,
