@@ -38,7 +38,7 @@ function Main() {
 
   const shouldShowPremiumSuggestionForModel = !context.isPremiumUser && context.currentModel?.isPremium
 
-  const shouldShowPremiumSuggestionStandalone = !context.hasUserDissmisedPremiumPrompt && !siteInfo && !context.isPremiumUser
+  const shouldShowPremiumSuggestionStandalone = context.shouldShowPremiumPrompt && !siteInfo && !context.isPremiumUser
 
   const shouldDisplayEraseAction = context.conversationHistory.length >= 1
 
