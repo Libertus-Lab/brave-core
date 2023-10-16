@@ -1,8 +1,8 @@
 diff --git a/ios/chrome/browser/shared/model/prefs/browser_prefs.mm b/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
-index 051272b27ce193e49b53c7c0ea43b9ce3d816e8b..898ef09b9fac88d28fe53fb53cbcfb32b4385656 100644
+index 857270e552ca97c2e9e766c92714853f2c5bc709..1e4f04d8813f5d1c7e5061be0665d6ef58b6204c 100644
 --- a/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
 +++ b/ios/chrome/browser/shared/model/prefs/browser_prefs.mm
-@@ -356,6 +356,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
+@@ -357,6 +357,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
    registry->RegisterIntegerPref(kAppStoreRatingTotalDaysOnChromeKey, 0);
    registry->RegisterListPref(kAppStoreRatingActiveDaysInPastWeekKey);
    registry->RegisterTimePref(kAppStoreRatingLastShownPromoDayKey, base::Time());
@@ -10,18 +10,18 @@ index 051272b27ce193e49b53c7c0ea43b9ce3d816e8b..898ef09b9fac88d28fe53fb53cbcfb32
  }
  
  void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
-@@ -561,6 +562,7 @@ void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
-   // Preference related to feed.
-   registry->RegisterTimePref(kActivityBucketLastReportedDateKey, base::Time());
+@@ -565,6 +566,7 @@ void RegisterBrowserStatePrefs(user_prefs::PrefRegistrySyncable* registry) {
+   registry->RegisterDoublePref(kTimeSpentInFeedAggregateKey, 0.0);
+ 
    registry->RegisterBooleanPref(kSyncRequested, false);
 +  BRAVE_REGISTER_BROWSER_STATE_PREFS
  }
  
  // This method should be periodically pruned of year+ old migrations.
-@@ -719,6 +721,7 @@ void MigrateObsoleteBrowserStatePrefs(PrefService* prefs) {
- 
-   // Added 10/2023.
-   prefs->ClearPref(kSyncRequested);
+@@ -745,6 +747,7 @@ void MigrateObsoleteBrowserStatePrefs(PrefService* prefs) {
+       prefs->SetDouble(kTimeSpentInFeedAggregateKey, value);
+     }
+   }
 +  BRAVE_MIGRATE_OBSOLETE_BROWSER_STATE_PREFS
  }
  
