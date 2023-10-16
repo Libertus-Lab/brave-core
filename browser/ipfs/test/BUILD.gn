@@ -17,6 +17,7 @@ source_set("unittests") {
     "//brave/browser/ipfs/test/ipfs_navigation_throttle_unittest.cc",
     "//brave/browser/ipfs/test/ipfs_network_utils_unittest.cc",
     "//brave/browser/net/ipfs_redirect_network_delegate_helper_unittest.cc",
+    "//brave/browser/ipfs/ipfs_fallback_redirect_nav_data_unittest.cc",
   ]
 
   deps = [

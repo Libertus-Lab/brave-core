@@ -5,12 +5,12 @@
 
 #include "brave/browser/ipfs/ipfs_tab_helper.h"
 
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "base/strings/string_split.h"
 #include "base/supports_user_data.h"
 #include "brave/browser/infobars/brave_ipfs_fallback_infobar_delegate.h"
 #include "brave/browser/ipfs/ipfs_host_resolver.h"
@@ -35,6 +35,8 @@
 #include "net/http/http_status_code.h"
 #include "url/gurl.h"
 #include "url/origin.h"
+#include "brave/browser/ipfs/ipfs_fallback_redirect_nav_data.h"
+
 
 #if !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/infobars/brave_ipfs_infobar_delegate.h"
@@ -72,71 +74,129 @@ void SetupIPFSProtocolHandler(const std::string& protocol) {
       ->StartCheckIsDefault(base::BindOnce(isDefaultCallback, protocol));
 }
 
-struct IpfsFallbackRedirectNavigationData : public base::SupportsUserData::Data {
-// static
-  static void SetIpfsFallbackNavData(content::NavigationEntry* entry,
-                                           const GURL& original_url) {
-    DCHECK(entry);
-    auto* data = static_cast<IpfsFallbackRedirectNavigationData*>(
-        entry->GetUserData(kIpfsFallbackRedirectNavigationDataKey));
+// struct IpfsFallbackRedirectNavigationData : public base::SupportsUserData::Data {
+// // static
+//   static IpfsFallbackRedirectNavigationData* GetOrCreateNavData(content::NavigationEntry* entry) {
+//     DCHECK(entry);
+//     auto* data = static_cast<IpfsFallbackRedirectNavigationData*>(
+//         entry->GetUserData(kIpfsFallbackRedirectNavigationDataKey));
 
-    if(!data) {
-      entry->SetUserData(kIpfsFallbackRedirectNavigationDataKey, std::make_unique<IpfsFallbackRedirectNavigationData>(original_url));    
-    } else {
-      DCHECK(!data->original_url.is_empty());
-      data->original_url = original_url;
-    }
-  }
+//     if(!data) {
+//       auto nav_data = std::make_unique<IpfsFallbackRedirectNavigationData>();
+//       data = nav_data.get();
+//       entry->SetUserData(kIpfsFallbackRedirectNavigationDataKey, std::move(nav_data));    
+//     } 
 
-  static GURL GetIpfsFallbackNavData(content::NavigationEntry* entry) {
-    DCHECK(entry);
-    const auto* data = static_cast<IpfsFallbackRedirectNavigationData*>(
-        entry->GetUserData(kIpfsFallbackRedirectNavigationDataKey));
-    if (!data) {
-      return {};
-    }
+//     return data;
+//   }
 
-    return data->original_url;
-  }
+//   static IpfsFallbackRedirectNavigationData* GetIpfsFallbackNavData(content::NavigationEntry* entry) {
+//     DCHECK(entry);
+//     auto* data = static_cast<IpfsFallbackRedirectNavigationData*>(
+//         entry->GetUserData(kIpfsFallbackRedirectNavigationDataKey));
+//     return data;
+//   }
 
-  static void CloneUserDataToTheCurrentRedirectChainItem() {
-    
-  }
+//   static IpfsFallbackRedirectNavigationData* GetIpfsFallbackNavDataFromRedirectChain(content::NavigationController& controller) {
+//     IpfsFallbackRedirectNavigationData* ipfs_fallback_nav_data = nullptr; 
+//     for(int i = 0; i < controller.GetEntryCount(); i++) {
+//       auto* entry = controller.GetEntryAtIndex(i);
+//       if(!entry) {
+//         continue;
+//       }
+//       if(!ipfs_fallback_nav_data) {
+//         auto* nav_data = GetIpfsFallbackNavData(entry);
+//         ipfs_fallback_nav_data = (nav_data && !nav_data->invalid) ? nav_data : nullptr;
+//       } else {
+//         break;
+//       }
+//     }
 
-  static bool IsAutoRedirectBlocked(content::NavigationHandle* handle, const GURL& current_page_url, const bool remove_from_history) {
-    bool is_blocked{false};
-    auto& controller = handle->GetWebContents()->GetController();
-    for(int i = 0; i < controller.GetEntryCount(); i++) {
-      auto* entry = controller.GetEntryAtIndex(i);
-      if(!entry) {
-        continue;
-      }    
-      const auto original_url = GetIpfsFallbackNavData(entry);
-      is_blocked = !original_url.is_empty() && original_url == current_page_url;
-      if(is_blocked) {
-        if(remove_from_history) {
-          controller.RemoveEntryAtIndex(i);
-        }
-        break;
-      }
-    }
-    return is_blocked;
-  }
+//     return ipfs_fallback_nav_data;
+//   }
+
+//   static void CloneUserDataToTheCurrentRedirectChainItem(content::NavigationController& controller) {
+//     IpfsFallbackRedirectNavigationData* ipfs_fallback_nav_data = nullptr; 
+//     for(int i = 0; i < controller.GetEntryCount(); i++) {
+//       auto* entry = controller.GetEntryAtIndex(i);
+//       if(!entry) {
+//         continue;
+//       } 
+//       if(!ipfs_fallback_nav_data) {
+//         auto* nav_data = GetIpfsFallbackNavData(entry);
+//         ipfs_fallback_nav_data = (nav_data && !nav_data->invalid) ? nav_data : nullptr;
+//           LOG(INFO) << "[IPFS] CloneUserDataToTheCurrentRedirectChainItem found first chain"
+//           << "\r\nEntryID:" << entry->GetUniqueID()
+//           << "\r\nEntryUrl:" << entry->GetURL()
+//           << "\r\nipfs_fallback_nav_data:" << (ipfs_fallback_nav_data ? ipfs_fallback_nav_data->ToDebugString() : "n/a")
+//           ;
+//       } else if(ipfs::ExtractSourceFromGateway(ipfs_fallback_nav_data->original_url) == ipfs::ExtractSourceFromGateway(entry->GetURL())) {
+//         LOG(INFO) << "[IPFS] CloneUserDataToTheCurrentRedirectChainItem copied fallback data to"
+//           << "\r\nEntryID:" << entry->GetUniqueID()
+//           << "\r\nEntryUrl:" << entry->GetURL()
+//           << "\r\nipfs_fallback_nav_data:" << (ipfs_fallback_nav_data ? ipfs_fallback_nav_data->ToDebugString() : "n/a")
+//         ;
+//         auto* nav_data = GetOrCreateNavData(entry);
+//         nav_data->original_url = ipfs_fallback_nav_data->original_url;
+//         nav_data->block_auto_redirect = ipfs_fallback_nav_data->block_auto_redirect;
+//         nav_data->invalid = ipfs_fallback_nav_data->invalid;
+//         ipfs_fallback_nav_data->invalid = true;
+//       } else {
+//         LOG(INFO) << "[IPFS] CloneUserDataToTheCurrentRedirectChainItem chain broken"
+//           << "\r\nEntryID:" << entry->GetUniqueID()
+//           << "\r\nEntryUrl:" << entry->GetURL()
+//           << "\r\nipfs_fallback_nav_data:" << (ipfs_fallback_nav_data ? ipfs_fallback_nav_data->ToDebugString() : "n/a")
+//           << "\r\nipfs from original:" << (ipfs::ExtractSourceFromGateway(ipfs_fallback_nav_data->original_url)).value()
+//           << "\r\nipfs from entryUrl:" << (ipfs::ExtractSourceFromGateway(entry->GetURL())).value()
+//         ;
+//       }
+//     }
+//   }
+
+//   static bool IsAutoRedirectBlocked(content::NavigationHandle* handle, const GURL& current_page_url, const bool remove_from_history) {
+//     bool is_blocked{false};
+//     auto& controller = handle->GetWebContents()->GetController();
+//     for(int i = 0; i < controller.GetEntryCount(); i++) {
+//       auto* entry = controller.GetEntryAtIndex(i);
+//       if(!entry) {
+//         continue;
+//       }    
+//       const auto* nav_data = GetIpfsFallbackNavData(entry);
+//       is_blocked = nav_data && !nav_data->invalid && nav_data->block_auto_redirect && !nav_data->original_url.is_empty() && nav_data->original_url == current_page_url;
+//       if(is_blocked) {
+//         if(remove_from_history) {
+//           controller.RemoveEntryAtIndex(i);
+//         }
+//         break;
+//       }
+//     }
+//     return is_blocked;
+//   }
 
 
-  explicit IpfsFallbackRedirectNavigationData(const GURL& url) : original_url(url) {}
-  GURL original_url;
-};
+//   IpfsFallbackRedirectNavigationData() = default;
+//   explicit IpfsFallbackRedirectNavigationData(const GURL& url) : original_url(url) {}
+//   IpfsFallbackRedirectNavigationData(const IpfsFallbackRedirectNavigationData& ifrnd) : original_url(ifrnd.original_url) {}
+
+//   std::string ToDebugString() const {
+//     return base::StringPrintf("invalid:%d block_auto_redirect:%d original_url:%s", invalid, block_auto_redirect, original_url.spec().c_str());
+//   }
+
+//   GURL original_url;
+//   bool block_auto_redirect{false};
+//   bool invalid{false};
+// };
 
 
 
 //TODO Remove later
 void PrintEntries(content::NavigationHandle* handle) {
-    if(!handle) {
+  if(!handle) {
     LOG(INFO) << "[IPFS]  PrintEntries No Handle";
     return;
   }
-
+  LOG(INFO) << "[IPFS]  PrintEntries #0" << (nullptr == handle);
+LOG(INFO) << "[IPFS]  PrintEntries # " << (nullptr == handle->GetWebContents());
   auto& controller = handle->GetWebContents()->GetController();
 
   for(int i = 0; i < controller.GetEntryCount(); i++) {
@@ -144,7 +204,8 @@ void PrintEntries(content::NavigationHandle* handle) {
     if(!entry) {
       continue;
     }
-    LOG(INFO) << "[IPFS] Entry index: " << i << " Id: " << entry->GetUniqueID() << " url: " << entry->GetURL() << " has_user_data:" << (nullptr != entry->GetUserData(kIpfsFallbackRedirectNavigationDataKey));
+    auto* nav_data = ipfs::IpfsFallbackRedirectNavigationData::GetIpfsFallbackNavData(entry);
+    LOG(INFO) << "[IPFS] Entry index: " << i << " Id: " << entry->GetUniqueID() << " url: " << entry->GetURL() << " user_data:" << (nav_data ? nav_data->ToDebugString() : "n/a");
   }
 }
 
@@ -188,6 +249,12 @@ class BraveIPFSFallbackInfoBarDelegateObserverImpl
   void OnRedirectToOriginalAddress() override {
     if (ipfs_tab_helper_.get()) {
       ipfs_tab_helper_->SetFallbackAddress(original_url_);
+    }
+  }
+
+  void OnCancel() override {
+    if (ipfs_tab_helper_.get()) {
+      ipfs_tab_helper_->InvalidateFallbackNavData();
     }
   }
 
@@ -493,7 +560,7 @@ void IPFSTabHelper::MaybeSetupIpfsProtocolHandlers(const GURL& url) {
 void IPFSTabHelper::DidFinishNavigation(content::NavigationHandle* handle) {
   LOG(INFO) << "[IPFS] DidFinishNavigation";
   DCHECK(handle);
-  PrintEntries(handle);
+//  PrintEntries(handle);
   if (!handle->IsInMainFrame() || !handle->HasCommitted() ||
       handle->IsSameDocument()) {
     return;
@@ -508,18 +575,30 @@ void IPFSTabHelper::DidFinishNavigation(content::NavigationHandle* handle) {
     if (!is_ipfs_companion_enabled &&
         ((handle->IsErrorPage() && handle->GetNetErrorCode() != net::OK) ||
          (headers && headers->response_code() != net::HTTP_OK))) {
-      if (!initial_navigation_url_.has_value()) {
-        initial_navigation_url_ = current_url;
+      auto* nav_data = IpfsFallbackRedirectNavigationData::GetIpfsFallbackNavDataFromRedirectChain(web_contents()->GetController());
+      if (!nav_data /*!initial_navigation_url_.has_value()*/) {
+        //initial_navigation_url_ = current_url;
         LOG(INFO) << "[IPFS] DidFinishNavigation Saved Initial URL"
         << "\r\ncurrent_url:" << current_url
         << "\r\nLastCommittedEntryUrl:" << web_contents()->GetController().GetLastCommittedEntry()->GetURL()
         << "\r\nLastCommittedEntryID:" << web_contents()->GetController().GetLastCommittedEntry()->GetUniqueID()
         ;
-        IpfsFallbackRedirectNavigationData::SetIpfsFallbackNavData(web_contents()->GetController().GetLastCommittedEntry(), current_url);
-      } else if (initial_navigation_url_.value() != GetCurrentPageURL()) {
-        ShowBraveIPFSFallbackInfoBar(initial_navigation_url_.value());
-        initial_navigation_url_.reset();
+        auto* nav_data_original_url = IpfsFallbackRedirectNavigationData::GetOrCreateNavData(web_contents()->GetController().GetLastCommittedEntry());
+
+        nav_data_original_url->SetOriginalUrl(current_url);
+      } else if (!nav_data->IsAutoRedirectBlocked() && nav_data->GetOriginalUrl() != GetCurrentPageURL()) {
+        ShowBraveIPFSFallbackInfoBar(nav_data->GetOriginalUrl() /*initial_navigation_url_.value()*/);
+        nav_data->SetValid(false);
+        //initial_navigation_url_.reset();
         return;
+      } else  {
+        LOG(INFO) << "[IPFS] DidFinishNavigation ????"
+        << "\r\nEntryID:" << web_contents()->GetController().GetLastCommittedEntry()->GetUniqueID()
+        << "\r\nEntryUrl:" << web_contents()->GetController().GetLastCommittedEntry()->GetURL()
+        << "\r\nnav_data:" << nav_data->ToDebugString()
+        << "\r\nGetCurrentPageURL():" << GetCurrentPageURL()
+        ;
+        IpfsFallbackRedirectNavigationData::CloneUserDataToTheCurrentRedirectChainItem(web_contents()->GetController());
       }
     }
   }
@@ -576,7 +655,9 @@ void IPFSTabHelper::SetFallbackAddress(const GURL& original_url) {
       << "\r\nAddr_Conv_Test2:" << (test2.has_value() ? test2.value() : GURL())
       << "\r\nAddr_Conv_Test3:" << (test3.has_value() ? test3.value() : GURL())
       ;
-      IpfsFallbackRedirectNavigationData::SetIpfsFallbackNavData(lc_entry, original_url);
+      auto* nav_data = IpfsFallbackRedirectNavigationData::GetOrCreateNavData(lc_entry);
+      nav_data->SetOriginalUrl(original_url);
+      nav_data->SetBlockAutoRedirect(true);
     }
   }
 
@@ -587,6 +668,17 @@ void IPFSTabHelper::SetFallbackAddress(const GURL& original_url) {
   }
 
   UpdateLocationBar();
+}
+
+void IPFSTabHelper::InvalidateFallbackNavData() {
+  for(int i = 0; i < web_contents()->GetController().GetEntryCount(); i++) {
+      auto* entry = web_contents()->GetController().GetEntryAtIndex(i);
+      if(!entry) {
+        continue;
+      }
+      entry->RemoveUserData(kIpfsFallbackRedirectNavigationDataKey);
+      LOG(INFO) << "[IPFS] InvalidateFallbackNavData EntryId:" << entry->GetUniqueID();
+  }
 }
 
 WEB_CONTENTS_USER_DATA_KEY_IMPL(IPFSTabHelper);

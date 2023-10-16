@@ -29,6 +29,8 @@ if (enable_ipfs) {
     "//brave/browser/ipfs/ipfs_subframe_navigation_throttle.h",
     "//brave/browser/ipfs/ipfs_tab_helper.cc",
     "//brave/browser/ipfs/ipfs_tab_helper.h",
+    "//brave/browser/ipfs/ipfs_fallback_redirect_nav_data.cc",
+    "//brave/browser/ipfs/ipfs_fallback_redirect_nav_data.h",
   ]
 
   brave_browser_ipfs_deps += [

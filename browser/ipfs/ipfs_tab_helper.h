@@ -164,6 +164,7 @@ class IPFSTabHelper : public content::WebContentsObserver,
   void LoadUrl(const GURL& gurl, const bool should_replace_current_entry = true);
 
   void SetFallbackAddress(const GURL& original_url);
+  void InvalidateFallbackNavData();
 
   void ShowBraveIPFSFallbackInfoBar(const GURL& initial_navigation_url);
 
@@ -175,7 +176,6 @@ class IPFSTabHelper : public content::WebContentsObserver,
   base::RepeatingCallback<void(const GURL&)>
       show_fallback_infobar_callback_for_testing_;
   std::unique_ptr<IPFSHostResolver> resolver_;
-  absl::optional<GURL> initial_navigation_url_;
   base::WeakPtrFactory<IPFSTabHelper> weak_ptr_factory_{this};
 
   WEB_CONTENTS_USER_DATA_KEY_DECL();
