@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index fe6dc4826d8cdd056e9b1ebbfb553c3413d0c8c1..37e998969544e3351187dfac41d66be2b2f76aa0 100644
+index f0aaa24344c71cac732e6fe27ed97fde507eaf54..f508f163ff74daa8a9810bc438f3b890d28d0948 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -3898,6 +3898,7 @@ const FeatureEntry::FeatureVariation kAndroidHubVariations[] = {
+@@ -3876,6 +3876,7 @@ const FeatureEntry::FeatureVariation kAndroidHubVariations[] = {
  //
  // When adding a new choice, add it to the end of the list.
  const FeatureEntry kFeatureEntries[] = {

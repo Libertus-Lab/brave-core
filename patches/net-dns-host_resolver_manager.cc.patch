@@ -1,8 +1,8 @@
 diff --git a/net/dns/host_resolver_manager.cc b/net/dns/host_resolver_manager.cc
-index 171fd9e830f10777b3a812ff17e032f17140b49a..9d281655c239c6e746c8d9893ddb37fc656610f2 100644
+index 31174967b526461362fde663d9e217c8f3179ffe..2a87d8fc1411ceead81c8f29500221cfb1ff9d2e 100644
 --- a/net/dns/host_resolver_manager.cc
 +++ b/net/dns/host_resolver_manager.cc
-@@ -2842,6 +2842,7 @@ class HostResolverManager::Job : public PrioritizedDispatcher::Job,
+@@ -2797,6 +2797,7 @@ class HostResolverManager::Job : public PrioritizedDispatcher::Job,
        MaybeCacheResult(results, ttl, secure);
  
      RecordJobHistograms(results, task_type);
