@@ -145,6 +145,7 @@ void BraveTab::ActiveStateChanged() {
   Tab::ActiveStateChanged();
 
   title_->SetFontList(IsActive() ? active_tab_font_ : normal_font_);
+  title_->SetFontList(IsActive() ? active_tab_font_ : normal_font_);
 
   // This should be called whenever the active state changes
   // see comment on UpdateEnabledForMuteToggle();

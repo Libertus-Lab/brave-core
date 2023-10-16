@@ -19,14 +19,7 @@ class SidebarItemView : public SidebarButtonView {
   SidebarItemView(const SidebarItemView&) = delete;
   SidebarItemView operator=(const SidebarItemView&) = delete;
 
-  void set_draw_highlight(bool draw) { draw_highlight_ = draw; }
-  void set_draw_highlight_on_left(bool draw_on_left) {
-    draw_highlight_on_left_ = draw_on_left;
-  }
-
-  void set_paint_background_on_hovered(bool paint) {
-    paint_background_on_hovered_ = paint;
-  }
+  void SetActiveState(bool active);
 
   void DrawHorizontalBorder(bool top);
   void ClearHorizontalBorder();
@@ -34,11 +27,10 @@ class SidebarItemView : public SidebarButtonView {
   // views::ImageButton overrides:
   void OnPaintBorder(gfx::Canvas* canvas) override;
   bool IsTriggerableEvent(const ui::Event& e) override;
+  void StateChanged(ButtonState old_state) override;
 
  private:
-  bool draw_highlight_ = false;
-  bool draw_highlight_on_left_ = false;
-  bool paint_background_on_hovered_ = false;
+  bool active_ = false;
   bool draw_horizontal_border_ = false;
   bool draw_horizontal_border_top_ = false;
 };

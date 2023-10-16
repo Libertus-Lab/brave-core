@@ -53,6 +53,7 @@
     E_CPONLY(kColorSidebarButtonBase)                         \
     E_CPONLY(kColorSidebarButtonPressed)                      \
     E_CPONLY(kColorSidebarItemBackgroundHovered)              \
+    E_CPONLY(kColorSidebarItemBackgroundActive)               \
     E_CPONLY(kColorSidebarItemDragIndicator)                  \
     E_CPONLY(kColorSidebarSeparator)                          \
     E_CPONLY(kColorSidebarPanelHeaderSeparator)               \

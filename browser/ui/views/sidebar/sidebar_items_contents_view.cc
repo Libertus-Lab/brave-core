@@ -266,7 +266,6 @@ void SidebarItemsContentsView::AddItemView(const sidebar::SidebarItem& item,
                          sidebar_model_->GetAllSidebarItems()[index].title),
                      index);
   item_view->set_context_menu_controller(this);
-  item_view->set_paint_background_on_hovered(true);
   item_view->SetCallback(
       base::BindRepeating(&SidebarItemsContentsView::OnItemPressed,
                           base::Unretained(this), item_view));
@@ -464,8 +463,7 @@ void SidebarItemsContentsView::UpdateItemViewStateAt(size_t index,
   SidebarItemView* item_view = GetItemViewAt(index);
 
   if (item.open_in_panel) {
-    item_view->set_draw_highlight(active);
-    item_view->set_draw_highlight_on_left(sidebar_on_left_);
+    item_view->SetActiveState(active);
   }
 
   if (sidebar::IsBuiltInType(item)) {
@@ -582,11 +580,6 @@ bool SidebarItemsContentsView::IsBubbleVisible() const {
   }
 
   return false;
-}
-
-void SidebarItemsContentsView::SetSidebarOnLeft(bool sidebar_on_left) {
-  sidebar_on_left_ = sidebar_on_left;
-  UpdateAllBuiltInItemsViewState();
 }
 
 BEGIN_METADATA(SidebarItemsContentsView, views::View)

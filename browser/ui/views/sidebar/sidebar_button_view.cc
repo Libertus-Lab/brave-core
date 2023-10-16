@@ -12,6 +12,8 @@
 #include "ui/views/controls/focus_ring.h"
 #include "ui/views/controls/highlight_path_generator.h"
 #include "ui/views/view_class_properties.h"
+#include "chrome/browser/ui/views/toolbar/toolbar_ink_drop_util.h"
+#include "chrome/browser/ui/color/chrome_color_provider_utils.h"
 
 SidebarButtonView::SidebarButtonView(const std::u16string& accessible_name) {
   // Locate image at center of the button.
@@ -25,14 +27,14 @@ SidebarButtonView::SidebarButtonView(const std::u16string& accessible_name) {
   // of sidebar control so that users can easily click buttons by throwing
   // the mouse cursor to the edge.
   SetProperty(views::kMarginsKey, gfx::Insets::VH(kMargin, 0));
-  views::InstallRoundRectHighlightPathGenerator(this,
-                                                gfx::Insets::VH(0, kMargin),
-                                                /*highlight_radius*/ 8);
-  views::InkDrop::Get(this)->SetMode(views::InkDropHost::InkDropMode::ON);
-  views::InkDrop::Get(this)->SetHighlightOpacity(1.0f);
-  views::InkDrop::Get(this)->SetBaseColorId(kColorSidebarItemBackgroundHovered);
   SetHasInkDropActionOnClick(true);
   SetShowInkDropWhenHotTracked(true);
+
+  // Use same ink drop config with toolbar buttons.
+  ConfigureInkDropForToolbar(this);
+  views::InstallRoundRectHighlightPathGenerator(this,
+                                                gfx::Insets::VH(0, kMargin),
+                                                kHighlightRadius);
 
   // Views resulting in focusable nodes later on in the accessibility tree need
   // to have an accessible name for screen readers to see what they are about.

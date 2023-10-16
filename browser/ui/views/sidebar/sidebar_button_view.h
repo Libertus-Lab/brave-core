@@ -16,6 +16,7 @@ class SidebarButtonView : public views::ImageButton {
   static constexpr int kSidebarButtonSize = 36;
   static constexpr int kIconSize = 16;
   static constexpr int kMargin = 4;
+  static constexpr int kHighlightRadius = 8;
 
   explicit SidebarButtonView(const std::u16string& accessible_name);
   ~SidebarButtonView() override;
