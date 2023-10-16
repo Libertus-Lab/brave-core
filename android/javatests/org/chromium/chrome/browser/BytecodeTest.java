@@ -769,7 +769,7 @@ public class BytecodeTest {
                 "org/chromium/chrome/browser/feed/BraveFeedSurfaceMediator",
                 FeedSurfaceCoordinator.class, Context.class, SnapScrollHelper.class,
                 PropertyModel.class, int.class, FeedActionDelegate.class,
-                FeedOptionsCoordinator.class));
+                FeedOptionsCoordinator.class, UiConfig.class));
         Assert.assertTrue(
                 constructorsMatch(
                         "org/chromium/chrome/browser/partnercustomizations/CustomizationProviderDelegateImpl",
