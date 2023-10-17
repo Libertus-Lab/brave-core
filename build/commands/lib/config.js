@@ -231,6 +231,9 @@ const Config = function () {
   this.brave_ai_chat_endpoint = getNPMConfig(['brave_ai_chat_endpoint']) || ''
   this.androidAabToApk = false
   this.enable_dangling_raw_ptr_checks = false
+  this.useBraveHermeticToolchain =
+    (this.gomaServerHost || '').endsWith('.brave.com') ||
+    (this.rbeService || '').includes('.brave.com')
 
   if (process.env.GOMA_DIR !== undefined) {
     this.realGomaDir = process.env.GOMA_DIR
@@ -1194,10 +1197,11 @@ Object.defineProperty(Config.prototype, 'defaultOptions', {
       env.BRAVE_CHANNEL = this.channel
     }
 
-    if (!this.gomaServerHost || !this.gomaServerHost.endsWith('.brave.com')) {
+    if (!this.useBraveHermeticToolchain) {
       env.DEPOT_TOOLS_WIN_TOOLCHAIN = '0'
     } else {
       // Use hermetic toolchain only internally.
+      env.USE_BRAVE_HERMETIC_TOOLCHAIN = '1'
       env.DEPOT_TOOLS_WIN_TOOLCHAIN = '1'
       env.GYP_MSVS_HASH_27370823e7 = '01b3b59461'
       env.DEPOT_TOOLS_WIN_TOOLCHAIN_BASE_URL = 'https://brave-build-deps-public.s3.brave.com/windows-hermetic-toolchain/'
