@@ -310,6 +310,24 @@ export const FooterContent = styled('div')`
   }
 `
 
+// Gets the value of the CSS `background` property.
+function getBackground(p: HasImageProps) {
+  if (!p.hasImage) {
+    return p.colorForBackground || `linear-gradient(to bottom right, #4D54D1, #A51C7B 50%, #EE4A37 100%)`
+  }
+
+  if (p.hasImage && p.imageSrc) {
+    return `linear-gradient(
+      rgba(0, 0, 0, 0.8),
+      rgba(0, 0, 0, 0) 35%,
+      rgba(0, 0, 0, 0) 80%,
+      rgba(0, 0, 0, 0.6) 100%
+    ), url("${p.imageSrc}")`
+  }
+
+  return ''
+}
+
 function getPageBackground(p: HasImageProps) {
   // Page background is duplicated since a backdrop-filter's
   // ancestor which has blur must also have background.
@@ -332,23 +350,14 @@ function getPageBackground(p: HasImageProps) {
       right: 0;
       display: block;
       transition: opacity .5s ease-in-out;
-      ${p => !p.hasImage && css`
-        background: ${p.colorForBackground || 'linear-gradient(to bottom right, #4D54D1, #A51C7B 50%, #EE4A37 100%);'}
-      `};
       ${p => p.hasImage && p.imageSrc && css`
         opacity: var(--bg-opacity);
-        background: linear-gradient(
-              rgba(0, 0, 0, 0.8),
-              rgba(0, 0, 0, 0) 35%,
-              rgba(0, 0, 0, 0) 80%,
-              rgba(0, 0, 0, 0.6) 100%
-            ), url("${p.imageSrc}");
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
       `};
       background-position: center center;
-      ${defaultState.featureFlagBraveNewsFeedV2Enabled && 'filter: blur(calc(var(--ntp-extra-content-effect-multiplier) * 64px))'}
+      background: ${getBackground};
     }
   `
 }
@@ -364,6 +373,16 @@ export const App = styled('div') <AppProps & HasImageProps>`
   transition: opacity .125s ease-out;
   opacity: ${p => p.dataIsReady ? 1 : 0};
   ${getPageBackground}
+
+  ${defaultState.featureFlagBraveNewsFeedV2Enabled && css`
+  .${CLASSNAME_PAGE_STUCK} &::before {
+      /* The FeedV2 has a semi-transparent white overlay. This is done via a
+       * linear-gradient to not break any of the FeedV1 features. */
+      --background-color: rgba(255,255,255, calc(0.3 * var(--ntp-extra-content-effect-multiplier)));
+      background: linear-gradient(var(--background-color), var(--background-color)), ${getBackground};
+        filter: blur(calc(var(--ntp-extra-content-effect-multiplier) * 64px));
+    }
+  `}
 `
 
 export const Link = styled('a') <{}>`
