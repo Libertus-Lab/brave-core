@@ -6,7 +6,7 @@
 import * as React from 'react'
 import { skipToken } from '@reduxjs/toolkit/query/react'
 
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Switch } from 'react-router-dom'
 
 // Components
 import {
@@ -386,16 +386,20 @@ function Container () {
   if (selectedAccount && (selectedPendingTransaction || signMessageData.length) &&
     selectedPanel === 'connectHardwareWallet') {
     return (
-      <PanelWrapper isLonger={false}>
-        <StyledExtensionWrapper>
-          <ConnectHardwareWalletPanel
-            onCancel={onCancelConnectHardwareWallet}
-            account={selectedAccount}
-            hardwareWalletCode={hardwareWalletCode}
-            onClickInstructions={onClickInstructions}
-          />
-        </StyledExtensionWrapper>
-      </PanelWrapper>
+      <BrowserRouter>
+        <Switch>
+          <PanelWrapper isLonger={false}>
+            <StyledExtensionWrapper>
+              <ConnectHardwareWalletPanel
+                onCancel={onCancelConnectHardwareWallet}
+                account={selectedAccount}
+                hardwareWalletCode={hardwareWalletCode}
+                onClickInstructions={onClickInstructions}
+              />
+            </StyledExtensionWrapper>
+          </PanelWrapper>
+        </Switch>
+      </BrowserRouter>
     )
   }
 
